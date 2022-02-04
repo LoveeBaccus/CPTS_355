@@ -1,0 +1,12 @@
+C:\ProgramData\chocolatey\bin
+C:\Users\loven\OneDrive\Documents\WSU\CPTS 355\Lab1
+
+C:\Users\loven\OneDrive\Documents\WSU\CPTS 355\Homework1
+
+CD from powershell admin into ^^^
+run everything from that terminal, not the vs code one
+
+to run a file:
+	gchi <file name>
+	<function name>
+
