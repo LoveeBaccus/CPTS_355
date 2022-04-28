@@ -1,10 +1,17 @@
- # CptS 355 - Fall 2021 - Lab 3
+# CptS 355 - Fall 2021 - Lab 3
 # Lovee Baccus
 
-debugging = True
+debugging = False
 def debug(*s): 
      if debugging: 
           print(*s)
+
+
+CDCdata = {'King':{'Mar':2706,'Apr':3620,'May':1860,'Jun':2157,'July':5014,'Aug':4327,'Sep':2843},
+        'Pierce':{'Mar':460,'Apr':965,'May':522,'Jun':647,'July':2470,'Aug':1776,'Sep':1266},
+         'Snohomish':{'Mar':1301,'Apr':1145,'May':532,'Jun':568,'July':1540,'Aug':1134,'Sep':811},
+         'Spokane':{'Mar':147,'Apr':222,'May':233,'Jun':794,'July':2412,'Aug':1530,'Sep':1751},
+         'Whitman' : {'Apr':7,'May':5,'Jun':19,'July':51,'Aug':514,'Sep':732, 'Oct':278} }
 
 monthlyCases = {'Mar':{'King':2706,'Pierce':460,'Snohomish':1301,'Spokane':147},
               'Apr':{'King':3620,'Pierce':965,'Snohomish':1145,'Spokane':222,'Whitman':7},
@@ -14,12 +21,7 @@ monthlyCases = {'Mar':{'King':2706,'Pierce':460,'Snohomish':1301,'Spokane':147},
               'Aug':{'King':4327,'Pierce':1776,'Snohomish':1134,'Spokane':1530,'Whitman':514},
               'Sep':{'King':2843,'Pierce':1266,'Snohomish':811,'Spokane':1751,'Whitman':732},
               'Oct':{'Whitman':278}}
-              
-CDCdata = {'King':{'Mar':2706,'Apr':3620,'May':1860,'Jun':2157,'July':5014,'Aug':4327,'Sep':2843},
-        'Pierce':{'Mar':460,'Apr':965,'May':522,'Jun':647,'July':2470,'Aug':1776,'Sep':1266},
-         'Snohomish':{'Mar':1301,'Apr':1145,'May':532,'Jun':568,'July':1540,'Aug':1134,'Sep':811},
-         'Spokane':{'Mar':147,'Apr':222,'May':233,'Jun':794,'July':2412,'Aug':1530,'Sep':1751},
-         'Whitman' : {'Apr':7,'May':5,'Jun':19,'July':51,'Aug':514,'Sep':732, 'Oct':278} }
+
 
 ## problem 1 getNumCases 
 def getNumCases(data,counties,months):
@@ -28,8 +30,6 @@ def getNumCases(data,counties,months):
          for month in months:
               sum+= data[county][month]
     return sum
-
-getNumCases(CDCdata, ['Whitman'],['Apr','May','Jun'])
 
 
 debug(getNumCases(CDCdata, ['Whitman'],['Apr','May','Jun']))
@@ -76,25 +76,8 @@ def mostCases(data):
     return reduce(lambda x,y : x if x[1] > y[1] else y, alltuples)
 
 ## problem 4a) searchDicts(L,k)
-def searchDicts(L,k): 
-    for d in reversed(L):
-        dKey = list(d.keys())
-        #check if k is one of the keys in the dictionary, if yes return and break
-        if (dKey[0] == k or d.get(k)):
-            return d.get(k)
-    return None
-
 ## problem 4b) searchDicts2(L,k)
-def searchDicts2_helper(tL,k,ind): 
-    if k in tL[ind][1]:
-        return tL[ind][1][k]
-    else:
-        if ind == 0:
-            return None
-        else:
-            next_ind = tL[ind][0]
-            return searchDicts2_helper(tL,k,next_ind)
-            
+
 ## problem 5 - getLongest
 def getLongest(l1):
     getLonger = lambda x,y: x if len(x)>len(y) else y

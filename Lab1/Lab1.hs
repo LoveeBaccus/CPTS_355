@@ -12,12 +12,14 @@ insert n item [] = []
 insert n item iL = (head iL) : insert (n - 1) item (tail iL)
 
 -- 2. insertEvery
-insertEvery :: (Eq t, Num t) => t -> a -> [a] -> [a]
-insertEvery n item = insertEveryHelper n
+-- insertEvery :: (Eq t, Num t) => t -> a -> [a] -> [a]
+
+
+insertEvery n a iL = insertEveryHelper n a iL n
      where
-          insertEveryHelper 0 xs = item : insertEveryHelper n xs
-          insertEveryHelper n [] = []
-          insertEveryHelper n (x:xs) = x : insertEveryHelper (n - 1) xs
+          insertEveryHelper 0 a [] on = [a]
+          insertEveryHelper n a [] on = []
+          insertEveryHelper n a (x:xs) on = x : insertEveryHelper (n - 1) a xs on
 
 -- 3. getSales
 getSales :: (Num p, Eq t) => t -> [(t,p)] -> p 

@@ -92,7 +92,7 @@ class Operators:
             op1 = self.opPop()
             op2 = self.opPop()
             if isinstance(op1, int) and isinstance(op2, int):
-                self.opPush(op1 - op2)
+                self.opPush(op2 - op1)
             else:
                 print("Error: sub - one of the operands is not a number value")
                 self.opPush(op2)
@@ -125,7 +125,7 @@ class Operators:
             op1 = self.opPop()
             op2 = self.opPop()
             if isinstance(op1, int) and isinstance(op2, int):
-                self.opPush(op1 % op2)
+                self.opPush(op2 % op1)
             else:
                 print("Error: mod - one of the operands is not a number value")
                 self.opPush(op2)
@@ -140,17 +140,23 @@ class Operators:
         if len(self.opstack) > 1:
             op1 = self.opPop()
             op2 = self.opPop()
-            if (isinstance(op1, int) and isinstance(op2, int)) or (isinstance(op1, bool) and isinstance(op2, bool)):
+            if (isinstance(op1,int) or isinstance(op1,float))  and (isinstance(op2,int) or isinstance(op2,float)):
                 if op1 == op2:
                     self.opPush(True)
                 else:
                     self.opPush(False)
-            else:
-                print("Error: eq() - incompatible types for comparison")
-                self.opPush(op2)
-                self.opPush(op1)
+            elif (isinstance(op1,StrConstant) and isinstance(op2,StrConstant)):
+                if op1.value == op2.value:
+                    self.opPush(True)
+                else:
+                    self.opPush(False)
+            elif (isinstance(op1,DictConstant) and isinstance(op2,DictConstant)):
+                if id(op1.value) == id(op2.value):
+                    self.opPush(True)
+                else:
+                    self.opPush(False)
         else:
-            print("Error: eq expects 2 operands")
+            print("Error: equals expects 2 operands")
 
     """
        Pops the top two values from the opstack; pushes "True" if the bottom value is less than the top value, otherwise pushes "False"
