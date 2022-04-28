@@ -1,3 +1,21 @@
+""" Lovee's General Notes
+    we get all the janky input from the file, and we have to process it by:
+        break it into tokens where each token is an expression
+        then take each token and actually translate it into the code that executes that input
+            for each token, we convert it to an expression
+            each expression has a value associated with it (the thing that will actually start the code)
+            depending on what type of value it is, we can either be lazy and use normal python data types OR we have to create something 
+                even tho the Literal and Name types seem redundant, it wouldn't make sense to have a class for StringExpr and Block 
+                if we didn't have ones for the simple ones as well
+
+                StringExpr and Blocks are complicated enough that they need another layer of extrapilation (I hope I am using that word right)
+                so, we have the value class which has StrConsts, DictConsts, and CodeArrays
+
+            Depending on what type of value it is, there are different operations associated with it, so each type has its own eval()
+            Eval() is what will take the expression and call the functions necessary to calculate/perform the action needed 
+
+"""
+
 """Parts of the lexer and parser code was adopted from https://composingprograms.com/. 
 The code has been changed according to Postscript syntax. 
 https://creativecommons.org/licenses/by-sa/3.0/
