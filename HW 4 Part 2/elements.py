@@ -45,8 +45,7 @@ class Literal(Expr):
         self.value = value
 
     def eval(self, psstacks):
-        """TO-DO (part2)"""
-        pass
+        psstacks.opPush(self.value)
 
     def __str__(self):
         return str(self.value)
@@ -61,18 +60,24 @@ class StringExpr(Expr):
         self.value = value
 
     def eval(self, psstacks):
-        """TO-DO (part2)"""
-        pass 
+        # DOn't forget to cast it FOOL
+        psstacks.opPush(StrConstant(self.value)) 
 
     def __str__(self):
         return str(self.value)
 
 class Name(Expr):
     """A `Name` is a variable , a built-in operator, or a function. 
-        a.	If the `Name` represents a name constant (i.e., its `var_name` attribute starts with a `/`), it will be evaluated to a Python string having value `var_name` . The evaluated value will be pushed onto the opstack.
-        b.	If the `Name` represents a built-in operator (i.e., its `var_name` attribute is one of the built-in operator names),  then we will evaluate it by executing the operator function defined in psbuiltins.py in the current environment (opstack). 
-        c.	If the `Name` represents a variable or function, interpreter looks up the value of the variable in the current environment (dictstack).
-            i.	If the variable value is a code-array (`CodeArray`), it should be applied (i.e., executed) by calling its `apply` method.  
+        a.	If the `Name` represents a name constant (i.e., its `var_name` attribute starts with a `/`), 
+            it will be evaluated to a Python string having value `var_name` . The evaluated value will be 
+            pushed onto the opstack.
+        b.	If the `Name` represents a built-in operator (i.e., its `var_name` attribute is one of the 
+            built-in operator names),  then we will evaluate it by executing the operator function defined 
+            in psbuiltins.py in the current environment (opstack). 
+        c.	If the `Name` represents a variable or function, interpreter looks up the value of the variable 
+            in the current environment (dictstack).
+            i.	If the variable value is a code-array (`CodeArray`), it should be applied (i.e., executed) 
+                by calling its `apply` method.  
             ii.	Otherwise, the variable value is a constant and it should be pushed onto the opstack. 
 
        The `var_name` attribute contains the name of the variable (as a Python string).
@@ -81,15 +86,30 @@ class Name(Expr):
         Expr.__init__(self, var_name)
         self.var_name = var_name
 
+    # reading the documentation surprisingly helps a lot I am silly 
     def eval(self,psstacks):
-        """TO-DO (part2)"""
-        pass       
+        # if Name starts with / then push to opstack so we can store the definition
+        if self.var_name[0] == '/':
+            psstacks.opPush(str(self.var_name))
+        # if this is a function call we want to evaluate for realsies, then we we want to push the actual function call onto the stack 
+        elif self.var_name in psstacks.builtin_operators:
+             psstacks.builtin_operators[self.var_name]()
+        # if it is calling a function we previously defined (by the first if case) then we want to find the definition (block) and execute that 
+        else:
+            value = psstacks.lookup(self.var_name)
+            if isinstance(value,CodeArray):
+                value.apply(psstacks)
+            else:
+                psstacks.opPush(value)
+         
+       
 
     def __str__(self):
         return str(self.var_name)
 
 class Block(Expr):
-    """A `Block` is a notation for representing a code block in PostScript, i.e., a function body, `if` block, `ifelse` block, or `for` loop block. 
+    """A `Block` is a notation for representing a code block in PostScript, i.e., a function body, `if` block, 
+        `ifelse` block, or `for` loop block. 
     In our interpreter, a `Block` evaluates to a `CodeArray` object. The `CodeArray` value is pushed onto the stack.   
     The `value` attribute contains the list of tokens in the code array.
     """
@@ -97,9 +117,10 @@ class Block(Expr):
         Expr.__init__(self, value)
         self.value = value
 
+    # I think we want to push a code array not just block, so I think we need to do something fancy 
+    # by fancy I mean caste it as a CodeArray
     def eval(self, psstacks):
-        """TO-DO (part2)"""
-        pass
+        psstacks.opPush(CodeArray(self.value))
 
     def __str__(self):
         return str(self.value)
@@ -190,9 +211,10 @@ class CodeArray(Value):
         Value.__init__(self, body)
         self.body = body
 
+    # A codeArray is another list that needs to be evaluated, so we just do it again 
     def apply(self, psstacks):
-        """ TO-DO in part2 """
-        pass
+        for tempExpr in self.body:
+            tempExpr.eval(psstacks)
 
     def __str__(self):
         return "{}({})".format(type(self).__name__, self.body)

@@ -380,9 +380,9 @@ if __name__ == '__main__':
     for testcase in tests:
         print("--------------------------------------------------------")
         try:
-            expr_list = read(testcase)
+            expr_list = read(testcase) # returns a list of expressions to be evaluated
             for expr in expr_list:
-                expr.eval(psstacks)
+                expr.eval(psstacks) # polymorphism
             print("--test {}--".format(testnum))
             testnum += 1
             print(CYAN+'opstack '+CEND, psstacks.opstack)

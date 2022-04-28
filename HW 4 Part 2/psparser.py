@@ -128,13 +128,26 @@ def read_expr(src):
     token = src.pop_first()
     if token is None:
         raise SyntaxError('Incomplete expression')
-    # TO-DO  - complete the following; include each condition as an `elif` case.
+        
     #   if the token is a literal return a `Literal` object having `value` token.
+    elif is_literal(token):
+        return Literal(token)
     #   if the token is a string delimiter (i.e., '('), get all tokens until the matching ')' delimiter and combine them as a Python string; 
     #       create a StringExpr object having this string value. 
+    elif token == '(':
+        tempString = read_str_constant(src)
+        return StringExpr(tempString)
     #   if the token is a name, create a Name object having `var_name` token. 
+    # names are weird because they can be the definition or the function call 
+    # I am not sure if I want to handle it here or later though but this feels to clean to mess up 
+    # it tells you hw to do it in elements. py when you evaluate it
+    elif is_name(token):
+        return Name(token)
     #   if the token is a code-array delimiter (i.e., '{'), get all tokens until the matching '}' delimiter and combine them as a Python list; 
     #       create a Block object having this list value.       
+    elif token == '{':
+        tempCodeBlock = read_block_expr(src)
+        return Block(tempCodeBlock)
     else:
         raise SyntaxError("'{}' is not the start of an expression".format(token))
 

@@ -33,8 +33,8 @@ if __name__ == '__main__':
                 else:
                     expr.eval(psstacks)    # EVALUATE
                 psstacks.cleanTop()
-            #print('opstack ', psstacks.opstack)
-            #print('dictstack ' , psstacks.dictstack)
+            print('opstack ', psstacks.opstack)
+            print('dictstack ' , psstacks.dictstack)
         except (SyntaxError, NameError, TypeError, Exception) as err:
             print(type(err).__name__ + ':', err)
         except (KeyboardInterrupt, EOFError):  # Ctrl-C, Ctrl-D

@@ -418,7 +418,6 @@ class Stacks:
             print("Error - putinterval needs three values")
 
         
-
     """
     search is a string only operator, i.e., works only with StrConstant values. 
     Pops two StrConstant values: delimiter and inputstr
@@ -485,14 +484,12 @@ class Stacks:
     # ------- if/ifelse Operators --------------
     """ if operator
         Pops a Block and a boolean value, if the value is True, executes the code array by calling apply.
-       Will be completed in part-2. 
     """
     def psIf(self):
         pass
 
     """ ifelse operator
         Pops two Blocks and a boolean value, if the value is True, executes the bottom Block otherwise executes the top Block.
-        Will be completed in part-2. 
     """
     def psIfelse(self):
         pass
@@ -504,7 +501,6 @@ class Stacks:
        Pops a Block, the end index (end), the increment (inc), and the begin index (begin) and 
        executes the code array for all loop index values ranging from `begin` to `end`. 
        Pushes the current loop index value to opstack before each execution of the Block. 
-       Will be completed in part-2. 
     """ 
     def psFor(self):
         pass
