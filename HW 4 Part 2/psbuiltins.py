@@ -343,15 +343,29 @@ class Stacks:
         If the argument is an DictConstant, gets the value for the given `name` from DictConstant's dictionary value and pushes it onto the opstack
     """
     def get(self):
-        index = self.opPop()
-        x = self.opPop()
-        if (isinstance(index, int)) and (isinstance(x, StrConstant)):
-            self.opPush(ord(index.value[x+1]))
-        elif (isinstance(index, int)) and (isinstance(x, DictConstant)):
-            self.opPush(x.value[index])
-        else:
-            self.opPush(x)
-            self.opPush(index)
+        if len(self.opstack) < 2:
+            print("Error - get() function")
+            return
+        location = self.opPop()
+        container = self.opPop()
+        if not isinstance(container, (StrConstant, DictConstant)):
+            print("Error - get() function wrong types")
+            self.opPush(container)
+            self.opPush(location)
+            return
+        if isinstance(container, DictConstant):
+            self.opPush(container.value[location])
+            return
+        if isinstance(container, StrConstant):
+            # make sure it is a valid place for a string 
+            # if it isn't push it back to the stack and display the error 
+            if not isinstance(location, int) or not 0 <= location < len(container.value) - 2:
+                print("Error - get() bad index dummy")
+                self.opPush(container)
+                self.opPush(location)
+                return
+            else:
+                self.opPush(ord(container.value[location + 1]))
    
     """
     Pops either:
