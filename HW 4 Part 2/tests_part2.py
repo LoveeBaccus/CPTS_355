@@ -576,7 +576,81 @@ class HW4Part2Tests(unittest.TestCase):
         for i in range(0,len(self.opstack_output[test_case])):
             self.assertTrue(self.compareObjectData(self.psstacks.opstack[i], self.opstack_output[test_case][i]))
 
+    def test_input33(self):
+        testinput33 = """
+            (Lovee Baccus) dup 6 (bACCUS) putinterval
+            dup 5 get
+        """ 
+        test_case = 'test{}'.format(33)
+        expr_list = read(testinput33)
+        for expr in expr_list:
+            expr.eval(self.psstacks)
+        self.assertEqual(len(self.psstacks.opstack),len(self.opstack_output[test_case]))
+        for i in range(0,len(self.opstack_output[test_case])):
+            self.assertTrue(self.compareObjectData(self.psstacks.opstack[i], self.opstack_output[test_case][i]))
 
+    def test_input34(self):
+        testinput34 = """
+            3 string dup dup dup
+            0 85 put
+            1 23 put
+            2 22 put
+        """ 
+        test_case = 'test{}'.format(34)
+        expr_list = read(testinput34)
+        for expr in expr_list:
+            expr.eval(self.psstacks)
+        self.assertEqual(len(self.psstacks.opstack),len(self.opstack_output[test_case]))
+        for i in range(0,len(self.opstack_output[test_case])):
+            self.assertTrue(self.compareObjectData(self.psstacks.opstack[i], self.opstack_output[test_case][i]))
+
+    def test_input35(self):
+        testinput35 = """
+            /myd 1 dict def
+            myd /f 10 put
+            myd /y 20 put
+            myd
+            begin
+            f 
+            y 
+            myd
+        """ 
+        test_case = 'test{}'.format(35)
+        expr_list = read(testinput35)
+        for expr in expr_list:
+            expr.eval(self.psstacks)
+        self.assertEqual(len(self.psstacks.opstack),len(self.opstack_output[test_case]))
+        for i in range(0,len(self.opstack_output[test_case])):
+            self.assertTrue(self.compareObjectData(self.psstacks.opstack[i], self.opstack_output[test_case][i]))
+
+    def test_input36(self):
+        testinput36 = """
+            /x 1 def
+            x
+            /x 10 def
+            x
+
+        """ 
+        test_case = 'test{}'.format(36)
+        expr_list = read(testinput36)
+        for expr in expr_list:
+            expr.eval(self.psstacks)
+        self.assertEqual(len(self.psstacks.opstack),len(self.opstack_output[test_case]))
+        for i in range(0,len(self.opstack_output[test_case])):
+            self.assertTrue(self.compareObjectData(self.psstacks.opstack[i], self.opstack_output[test_case][i]))
+
+    def test_input37(self):
+        testinput37 = """
+            (Lovee) dup /str exch def 
+            (Lovee) str eq
+        """ 
+        test_case = 'test{}'.format(37)
+        expr_list = read(testinput37)
+        for expr in expr_list:
+            expr.eval(self.psstacks)
+        self.assertEqual(len(self.psstacks.opstack),len(self.opstack_output[test_case]))
+        for i in range(0,len(self.opstack_output[test_case])):
+            self.assertTrue(self.compareObjectData(self.psstacks.opstack[i], self.opstack_output[test_case][i]))
 
 if __name__ == '__main__':
     unittest.main()
