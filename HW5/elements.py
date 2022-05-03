@@ -98,8 +98,8 @@ class Name(Expr):
         # if it is calling a function we previously defined (by the first if case) then we want to find the definition (block) and execute that 
         elif isinstance(psstacks.lookup(self.var_name),CodeArray):
             #FIND INDEX AH
-            i = psstacks.findIndex(self.var_name)
-            psstacks.dictPush(i,{})
+            index = psstacks.getInd(self.var_name)
+            psstacks.dictPush(index,{})
             psstacks.lookup(self.var_name).apply(psstacks)
             psstacks.dictPop()
         else:
@@ -110,7 +110,6 @@ class Name(Expr):
                 psstacks.opPush(value)
          
        
-
     def __str__(self):
         return str(self.var_name)
 

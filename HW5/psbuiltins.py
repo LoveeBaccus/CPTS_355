@@ -7,8 +7,29 @@ from elements import StrConstant, DictConstant, CodeArray
 # 
 
 class Stacks:
-    def __init__(self):
+
+    # I used this for my name stuff so I just stuck it at the top so it was easy to see
+    def getInd(self,name):
+        name = '/' + name
+        index = (len(self.dictstack))-1
+
+        if name in self.dictstack[index][1]:
+            return index
+        else:
+            link = self.dictstack[index][0]
+            while link != 0:
+                if name in self.dictstack[index][1]:
+                    return link
+                else:
+                    link = self.dictstack[link][0]
+        if name in self.dictstack[link][1]:
+            return link
+        else:
+            print ("Error - getIndex() ")
+
+    def __init__(self, scope):
         #stack variables
+        self.scope = scope
         self.opstack = []  #assuming top of the stack is the end of the list
         self.dictstack = []  #assuming top of the stack is the end of the list
         # The environment that the REPL evaluates expressions in.
@@ -36,8 +57,6 @@ class Stacks:
             "getinterval":self.getinterval,
             "putinterval":self.putinterval,
             "search" : self.search,
-            "begin":self.begin,
-            "end":self.end,
             "def":self.psDef,
             "if":self.psIf,
             "ifelse":self.psIfelse,
@@ -102,10 +121,34 @@ class Stacks:
             print("Error: Dictionary stack is empty")
         elif len(self.dictstack) > 0:
             # we just wanna change it to use the correct lookup based on the type
+            name = "/" + name
+
             if self.scope == "static":
-                return self.staticLookup(name)
+                index = self.dictstack[-1][0]
+                current = self.dictstack[index][1]
+
+                if isinstance(current, DictConstant):
+                    current = current.value
+
+                if index == 0:
+                    if name in current:
+                        return current[name]
+                    return None
+                else:
+                    i = 0
+                    while index != 0:
+                        if name in self.dictstack[index][1]:
+                            return self.dictstack[index][1][name]
+                        index = self.dictstack[index][0]
+                        i = i + 1
+                    return None
             else: # dynamic
-                return self.dynamicLookup(name)
+                i = 0
+                while (i != len(self.dictstack)):
+                    if name in self.dictstack[(-1 - i)][1]:
+                        return self.dictstack[(-1 - i)][1][name]
+                    i += 1
+                raise ValueError('Error: lookup - no variable or function found')
 
     #------- Arithmetic Operators --------------
 
