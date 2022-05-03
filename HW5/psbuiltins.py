@@ -2,13 +2,13 @@ from colors import *
 from elements import StrConstant, DictConstant, CodeArray
 
 # TODO 
-# Lookup
-# Eq, Lt, Gt
+# 
 # 
 
 class Stacks:
 
     # I used this for my name stuff so I just stuck it at the top so it was easy to see
+    # I was trying to do this inside the name eval but it was so ugly like that 
     def getInd(self,name):
         name = '/' + name
         index = (len(self.dictstack))-1
@@ -27,6 +27,8 @@ class Stacks:
         else:
             print ("Error - getIndex() ")
 
+    # Adding in an extra parameter to control the scope
+    # get rid of begin and end in here 
     def __init__(self, scope):
         #stack variables
         self.scope = scope
@@ -148,7 +150,7 @@ class Stacks:
                     if name in self.dictstack[(-1 - i)][1]:
                         return self.dictstack[(-1 - i)][1][name]
                     i += 1
-                raise ValueError('Error: lookup - no variable or function found')
+                raise ValueError('Error: lookup()')
 
     #------- Arithmetic Operators --------------
 
