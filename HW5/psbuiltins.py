@@ -77,19 +77,20 @@ class Stacks:
     """
        Helper function. Pushes the given dictionary onto the dictstack. 
     """   
-    def dictPush(self,d):
-        self.dictstack.append(d)
+    def dictPush(self,index,d):
+        # changed to accept the index feild since its a tuple now
+        self.dictstack.append((index, d))
 
     """
        Helper function. Adds name:value pair to the top dictionary in the dictstack.
        (Note: If the dictstack is empty, first adds an empty dictionary to the dictstack then adds the name:value to that. 
     """  
     def define(self,name, value):
-        if len(self.dictstack) == 0:
-            d = dict()
-            self.dictstack.append(d)
-        d1 = self.dictstack[len(self.dictstack)-1]
-        d1[name] = value # we can assign this after it is on the stack, unlike what I originally tried
+        if not self.dictstack:
+            # we are pushing the index and the empty dictionary as a tuple
+            # I originally thought we would make an element type for the tuple but that made it very weird
+            self.dictPush(0, {})
+        self.dictstack[-1][1][name] = value
 
     """
        Helper function. Searches the dictstack for a variable or function and returns its value. 
@@ -100,10 +101,11 @@ class Stacks:
         if len(self.dictstack) == 0:
             print("Error: Dictionary stack is empty")
         elif len(self.dictstack) > 0:
-            name1 = '/' + name # gotta remember this cuz other wise you wont find anything 
-            for i in range(len(self.dictstack)-1,-1,-1): # Start at the top and go down cuz stacks are weird 
-                if name1 in self.dictstack[i]:
-                    return self.dictstack[i].get(name1)
+            # we just wanna change it to use the correct lookup based on the type
+            if self.scope == "static":
+                return self.staticLookup(name)
+            else: # dynamic
+                return self.dynamicLookup(name)
 
     #------- Arithmetic Operators --------------
 
@@ -253,10 +255,20 @@ class Stacks:
         for item in reversed(self.opstack):
             print(item)
         print("-----------------------"+CEND)
-        print(RED+"**dictstack**")
-        for item in reversed(self.dictstack):
-            print(item)
-        print("-----------------------"+ CEND)
+        # this is where it gets tricky because now we gotta add the extra stuff
+        # we need to follow the static declarations, so we have to use the index
+        print(RED+"===**dictstack**===")
+        for num, item in enumerate(reversed(self.dictstack)):
+            print(f"----{len(self.dictstack) -1 -num}----{item[0]}----")
+            if(item[1]):
+                if(isinstance(item[1], DictConstant)):
+                    for item, key in item[1].value.items():
+                        print(f"{item}   {key}")
+                else:
+                    for item, key in item[1].items():
+                        print(f"{item}   {key}")
+            pass
+        print("================="+ CEND)
 
     """
        Copies the top element in opstack.
@@ -464,26 +476,7 @@ class Stacks:
             print("Error: search was expecting 2 operands")
 
     # ------- Operators that manipulate the dictstact --------------
-    """ begin operator
-        Pops a DictConstant value from opstack and pushes it's `value` to the dictstack."""
-    def begin(self):
-        if len(self.opstack) > 0:
-            op = self.opPop()
-            if isinstance(op, DictConstant):
-                self.dictPush(op.value)
-            else:
-                print("Error: popped element was not a dict")
-                self.opPush(op)
-        else:
-            print("Error: empty opstack")
-
-    """ end operator
-        Pops the top dictionary from dictstack."""
-    def end(self):
-        if len(self.dictstack) > 1:
-            self.dictPop()
-        else:
-            print("Error: end - DictStack size is too small")
+    # Deleted begin and end operators since they aren't used I hope this doesn't break it 
         
     """ Pops a name and a value from stack, adds the definition to the dictionary at the top of the dictstack. """
     def psDef(self):
@@ -500,13 +493,28 @@ class Stacks:
         Pops a Block and a boolean value, if the value is True, executes the code array by calling apply.
     """
     def psIf(self):
-        pass
+        tempBlock = self.opPop()
+        bval = self.opPop()
+        if bval == True:
+            self.dictPush(len(self.dictstack)-1,{})
+            tempBlock.apply(self)
+            self.dictPop()
 
     """ ifelse operator
         Pops two Blocks and a boolean value, if the value is True, executes the bottom Block otherwise executes the top Block.
     """
     def psIfelse(self):
-        pass
+        temp1 = self.opPop()
+        temp2 = self.opPop()
+        bval = self.opPop()
+        if bval == True:
+            self.dictPush(len(self.dictstack)-1,{})
+            temp2.apply(self)
+            self.dictPop()
+        else:
+            self.dictPush(len(self.dictstack)-1,{})
+            temp1.apply(self)
+            self.dictPop()
 
 ## PART TWO ##
     #------- Loop Operators --------------
@@ -517,7 +525,16 @@ class Stacks:
        Pushes the current loop index value to opstack before each execution of the Block. 
     """ 
     def psFor(self):
-        pass
+        if len(self.opstack) > 3:
+            tempBlock = self.opPop()
+            end = self.opPop()
+            inc = self.opPop()
+            start = self.opPop()
+            for i in range(int(start), int(end)+1, int(inc)):
+                self.opPush(i)
+                tempBlock.apply(self)
+        else:
+            print("Error - need 4 operands")
 
     """ Cleans both stacks. """      
     def clearBoth(self):

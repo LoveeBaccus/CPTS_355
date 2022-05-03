@@ -92,9 +92,16 @@ class Name(Expr):
         if self.var_name[0] == '/':
             psstacks.opPush(str(self.var_name))
         # if this is a function call we want to evaluate for realsies, then we we want to push the actual function call onto the stack 
-        elif self.var_name in psstacks.builtin_operators:
+        #gotta add the key() because now we are dealing with tuples
+        elif self.var_name in psstacks.builtin_operators.keys():
              psstacks.builtin_operators[self.var_name]()
         # if it is calling a function we previously defined (by the first if case) then we want to find the definition (block) and execute that 
+        elif isinstance(psstacks.lookup(self.var_name),CodeArray):
+            #FIND INDEX AH
+            i = psstacks.findIndex(self.var_name)
+            psstacks.dictPush(i,{})
+            psstacks.lookup(self.var_name).apply(psstacks)
+            psstacks.dictPop()
         else:
             value = psstacks.lookup(self.var_name)
             if isinstance(value,CodeArray):
